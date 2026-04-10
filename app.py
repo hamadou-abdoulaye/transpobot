@@ -174,8 +174,8 @@ def get_trajets_recent():
 
 @app.get("/")
 def root():
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="https://hamadou-abdoulaye.github.io/transpobot")
+    from fastapi.responses import FileResponse
+    return FileResponse("index.html")
 
 @app.get("/health")
 def health():
