@@ -172,6 +172,11 @@ def get_trajets_recent():
         LIMIT 20
     """)
 
+@app.get("/")
+def root():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="https://hamadou-abdoulaye.github.io/transpobot")
+
 @app.get("/health")
 def health():
     return {"status": "ok", "app": "TranspoBot"}
