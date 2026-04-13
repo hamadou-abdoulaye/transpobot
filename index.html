@@ -6,6 +6,45 @@
   <title>TranspoBot — GLSi</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    /* Splash screen */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0d47a1, #1a73e8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+    #splash .bus { font-size: 5rem; animation: busMove 1.5s ease-in-out infinite alternate; }
+    @keyframes busMove {
+      from { transform: translateX(-20px); }
+      to   { transform: translateX(20px); }
+    }
+    #splash h1 { color: white; font-size: 2.2rem; margin-top: 20px; font-family: 'Segoe UI', sans-serif; }
+    #splash p  { color: rgba(255,255,255,0.75); margin-top: 8px; font-family: 'Segoe UI', sans-serif; font-size: 1rem; }
+    #splash .bar {
+      width: 220px; height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      margin-top: 32px;
+      overflow: hidden;
+    }
+    #splash .bar-fill {
+      height: 100%;
+      background: white;
+      border-radius: 4px;
+      animation: load 2s ease forwards;
+    }
+    @keyframes load {
+      from { width: 0%; }
+      to   { width: 100%; }
+    }
+  </style>
+  <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -281,6 +320,14 @@
   </style>
 </head>
 <body>
+
+<!-- Splash Screen -->
+<div id="splash">
+  <div class="bus">🚌</div>
+  <h1>TranspoBot</h1>
+  <p>Assistant intelligent de gestion de transport</p>
+  <div class="bar"><div class="bar-fill"></div></div>
+</div>
 
 <header>
   <div>
@@ -576,6 +623,12 @@
 
   loadStats();
   loadCharts();
+
+  // Splash screen
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hide');
+    setTimeout(() => document.getElementById('splash').remove(), 600);
+  }, 2200);
 
   async function loadCharts() {
     try {
