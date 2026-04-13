@@ -15,7 +15,6 @@
       background-position: center;
       background-attachment: fixed;
     }
-
     body::before {
       content: '';
       position: fixed;
@@ -23,8 +22,7 @@
       background: rgba(10, 40, 100, 0.72);
       z-index: 0;
     }
-
-    header, .container { position: relative; z-index: 1; }
+    header, nav, .container { position: relative; z-index: 1; }
 
     header {
       background: linear-gradient(135deg, #1a73e8, #0d47a1);
@@ -38,6 +36,29 @@
     header h1 { font-size: 1.4rem; }
     header span { font-size: 0.9rem; opacity: 0.85; }
 
+    /* Navigation */
+    nav {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      display: flex;
+      gap: 4px;
+      padding: 10px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    nav button {
+      background: transparent;
+      color: rgba(255,255,255,0.75);
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    nav button:hover { background: rgba(255,255,255,0.15); color: white; }
+    nav button.active { background: white; color: #1a73e8; font-weight: 700; }
+
     .container {
       max-width: 1100px;
       margin: 24px auto;
@@ -46,6 +67,10 @@
       flex-direction: column;
       gap: 24px;
     }
+
+    /* Pages */
+    .page { display: none; flex-direction: column; gap: 24px; }
+    .page.active { display: flex; }
 
     /* Stats */
     .stats-grid {
@@ -60,16 +85,54 @@
       text-align: center;
       box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     }
-    .stat-card .value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1a73e8;
+    .stat-card .value { font-size: 2rem; font-weight: 700; color: #1a73e8; }
+    .stat-card .label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
+    /* Cards communes */
+    .card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      border: 1px solid rgba(26,115,232,0.2);
+      overflow: hidden;
     }
-    .stat-card .label {
-      font-size: 0.85rem;
-      color: #666;
-      margin-top: 4px;
+    .card-header {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
     }
+    .card-body { padding: 20px; }
+
+    /* Badge statut */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .badge-actif { background: #e6f4ea; color: #1e7e34; }
+    .badge-maintenance { background: #fff3cd; color: #856404; }
+    .badge-hors_service { background: #fde8e8; color: #c0392b; }
+    .badge-termine { background: #e6f4ea; color: #1e7e34; }
+    .badge-en_cours { background: #e8f0fe; color: #1a73e8; }
+    .badge-planifie { background: #fff3cd; color: #856404; }
+    .badge-annule { background: #fde8e8; color: #c0392b; }
+    .badge-disponible { background: #e6f4ea; color: #1e7e34; }
+    .badge-indisponible { background: #fde8e8; color: #c0392b; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th {
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: white;
+      padding: 10px 12px;
+      text-align: left;
+    }
+    td { padding: 9px 12px; border-bottom: 1px solid #eee; }
+    tr:hover td { background: #f5f8ff; }
 
     /* Chat */
     .chat-box {
@@ -82,7 +145,6 @@
       overflow: hidden;
       border: 1px solid rgba(26,115,232,0.2);
     }
-
     .chat-header {
       padding: 16px 20px;
       background: linear-gradient(135deg, #1a73e8, #0d47a1);
@@ -99,7 +161,6 @@
       border-radius: 50%;
       box-shadow: 0 0 6px #4cff91;
     }
-
     .chat-messages {
       flex: 1;
       overflow-y: auto;
@@ -111,24 +172,16 @@
     }
     .chat-messages::-webkit-scrollbar { width: 5px; }
     .chat-messages::-webkit-scrollbar-thumb { background: #c5d5f0; border-radius: 10px; }
-
-    .message-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-    }
+    .message-row { display: flex; align-items: flex-end; gap: 8px; }
     .message-row.user { flex-direction: row-reverse; }
-
     .avatar {
       width: 32px; height: 32px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1rem;
-      flex-shrink: 0;
+      font-size: 1rem; flex-shrink: 0;
     }
     .avatar.bot { background: linear-gradient(135deg, #1a73e8, #0d47a1); }
     .avatar.user { background: linear-gradient(135deg, #f9a825, #f57f17); }
-
     .message {
       max-width: 72%;
       padding: 11px 16px;
@@ -143,19 +196,14 @@
       border-bottom-right-radius: 4px;
     }
     .message.bot {
-      background: white;
-      color: #333;
+      background: white; color: #333;
       border-bottom-left-radius: 4px;
       border: 1px solid #e8edf5;
     }
-
-    /* Points animés loading */
     .dots { display: flex; align-items: center; gap: 4px; padding: 4px 0; }
     .dots span {
-      display: inline-block;
-      width: 7px; height: 7px;
-      background: #1a73e8;
-      border-radius: 50%;
+      display: inline-block; width: 7px; height: 7px;
+      background: #1a73e8; border-radius: 50%;
       animation: bounce 1.2s infinite;
     }
     .dots span:nth-child(2) { animation-delay: 0.2s; }
@@ -164,76 +212,45 @@
       0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
       40% { transform: translateY(-6px); opacity: 1; }
     }
-
     .sql-block {
-      background: #1e2a38;
-      color: #80cbc4;
-      font-family: monospace;
-      font-size: 0.8rem;
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-top: 8px;
-      white-space: pre-wrap;
-      word-break: break-all;
-      border-left: 3px solid #1a73e8;
+      background: #1e2a38; color: #80cbc4;
+      font-family: monospace; font-size: 0.8rem;
+      padding: 10px 14px; border-radius: 8px;
+      margin-top: 8px; white-space: pre-wrap;
+      word-break: break-all; border-left: 3px solid #1a73e8;
     }
-
     .suggestions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 10px 16px;
-      background: white;
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 10px 16px; background: white;
       border-top: 1px solid #f0f0f0;
     }
     .suggestion {
-      background: #e8f0fe;
-      color: #1a73e8;
-      border: 1px solid #c5d8fb;
-      border-radius: 16px;
-      padding: 5px 14px;
-      font-size: 0.81rem;
-      cursor: pointer;
-      transition: background 0.2s;
+      background: #e8f0fe; color: #1a73e8;
+      border: 1px solid #c5d8fb; border-radius: 16px;
+      padding: 5px 14px; font-size: 0.81rem;
+      cursor: pointer; transition: background 0.2s;
     }
     .suggestion:hover { background: #d2e3fc; }
-
     .chat-input {
-      display: flex;
-      padding: 14px 16px;
-      border-top: 1px solid #e8edf5;
-      gap: 10px;
-      background: white;
+      display: flex; padding: 14px 16px;
+      border-top: 1px solid #e8edf5; gap: 10px; background: white;
     }
     .chat-input input {
-      flex: 1;
-      padding: 11px 18px;
-      border: 1.5px solid #dde3f0;
-      border-radius: 24px;
-      font-size: 0.92rem;
-      outline: none;
-      background: #f7f9fc;
-      transition: border 0.2s, background 0.2s;
+      flex: 1; padding: 11px 18px;
+      border: 1.5px solid #dde3f0; border-radius: 24px;
+      font-size: 0.92rem; outline: none;
+      background: #f7f9fc; transition: border 0.2s, background 0.2s;
     }
-    .chat-input input:focus {
-      border-color: #1a73e8;
-      background: white;
-    }
+    .chat-input input:focus { border-color: #1a73e8; background: white; }
     .chat-input button {
       background: linear-gradient(135deg, #1a73e8, #0d47a1);
-      color: white;
-      border: none;
-      border-radius: 24px;
-      padding: 11px 22px;
-      cursor: pointer;
-      font-size: 0.92rem;
-      font-weight: 600;
-      transition: opacity 0.2s;
+      color: white; border: none; border-radius: 24px;
+      padding: 11px 22px; cursor: pointer;
+      font-size: 0.92rem; font-weight: 600; transition: opacity 0.2s;
     }
     .chat-input button:hover { opacity: 0.88; }
     .chat-input button:disabled { opacity: 0.45; cursor: not-allowed; }
 
-    /* Résultats */
     .results-box {
       background: rgba(255,255,255,0.97);
       border-radius: 16px;
@@ -241,29 +258,10 @@
       padding: 20px;
       border: 1px solid rgba(26,115,232,0.2);
     }
-    .results-box h3 {
-      margin-bottom: 12px;
-      color: #1a73e8;
-      font-size: 1rem;
-    }
+    .results-box h3 { margin-bottom: 12px; color: #1a73e8; font-size: 1rem; }
     .results-box p { color: #999; font-size: 0.9rem; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-    }
-    th {
-      background: linear-gradient(135deg, #1a73e8, #0d47a1);
-      color: white;
-      padding: 10px 12px;
-      text-align: left;
-    }
-    td {
-      padding: 9px 12px;
-      border-bottom: 1px solid #eee;
-    }
-    tr:hover td { background: #f5f8ff; }
+    .loading-text { color: #999; font-style: italic; padding: 20px; text-align: center; }
   </style>
 </head>
 <body>
@@ -275,45 +273,85 @@
   </div>
 </header>
 
+<nav>
+  <button class="active" onclick="showPage('dashboard')">📊 Dashboard</button>
+  <button onclick="showPage('vehicules')">🚌 Véhicules</button>
+  <button onclick="showPage('chauffeurs')">👨‍✈️ Chauffeurs</button>
+  <button onclick="showPage('trajets')">🗺️ Trajets</button>
+  <button onclick="showPage('chat')">💬 Assistant IA</button>
+</nav>
+
 <div class="container">
 
-  <!-- Statistiques -->
-  <div class="stats-grid" id="stats">
-    <div class="stat-card"><div class="value">…</div><div class="label">Trajets terminés</div></div>
-    <div class="stat-card"><div class="value">…</div><div class="label">Trajets en cours</div></div>
-    <div class="stat-card"><div class="value">…</div><div class="label">Véhicules actifs</div></div>
-    <div class="stat-card"><div class="value">…</div><div class="label">Incidents ouverts</div></div>
-    <div class="stat-card"><div class="value">…</div><div class="label">Recette totale (FCFA)</div></div>
+  <!-- PAGE DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid" id="stats">
+      <div class="stat-card"><div class="value">…</div><div class="label">Trajets terminés</div></div>
+      <div class="stat-card"><div class="value">…</div><div class="label">Trajets en cours</div></div>
+      <div class="stat-card"><div class="value">…</div><div class="label">Véhicules actifs</div></div>
+      <div class="stat-card"><div class="value">…</div><div class="label">Incidents ouverts</div></div>
+      <div class="stat-card"><div class="value">…</div><div class="label">Recette totale (FCFA)</div></div>
+    </div>
   </div>
 
-  <!-- Chat -->
-  <div class="chat-box">
-    <div class="chat-header">
-      <span class="dot"></span>
-      💬 TranspoBot — Assistant IA
-    </div>
-    <div class="chat-messages" id="messages">
-      <div class="message-row bot">
-        <div class="avatar bot">🤖</div>
-        <div class="message bot">Bonjour ! Je suis TranspoBot. Posez-moi une question sur vos données de transport.</div>
+  <!-- PAGE VÉHICULES -->
+  <div class="page" id="page-vehicules">
+    <div class="card">
+      <div class="card-header">🚌 Liste des véhicules</div>
+      <div class="card-body">
+        <div id="vehicules-content"><p class="loading-text">Chargement…</p></div>
       </div>
     </div>
-    <div class="suggestions">
-      <button class="suggestion" onclick="ask('Combien de trajets ont été effectués ?')">Combien de trajets ?</button>
-      <button class="suggestion" onclick="ask('Liste des véhicules actifs')">Véhicules actifs</button>
-      <button class="suggestion" onclick="ask('Quels sont les incidents non résolus ?')">Incidents ouverts</button>
-      <button class="suggestion" onclick="ask('Quel chauffeur a fait le plus de trajets ?')">Meilleur chauffeur</button>
-    </div>
-    <div class="chat-input">
-      <input type="text" id="questionInput" placeholder="Ex: Combien de bus sont en maintenance ?" />
-      <button id="sendBtn" onclick="sendMessage()">Envoyer</button>
+  </div>
+
+  <!-- PAGE CHAUFFEURS -->
+  <div class="page" id="page-chauffeurs">
+    <div class="card">
+      <div class="card-header">👨‍✈️ Liste des chauffeurs</div>
+      <div class="card-body">
+        <div id="chauffeurs-content"><p class="loading-text">Chargement…</p></div>
+      </div>
     </div>
   </div>
 
-  <!-- Résultats -->
-  <div class="results-box">
-    <h3 id="resultsTitle">📊 Résultats</h3>
-    <div id="resultsContent"><p>Les résultats de vos requêtes s'afficheront ici.</p></div>
+  <!-- PAGE TRAJETS -->
+  <div class="page" id="page-trajets">
+    <div class="card">
+      <div class="card-header">🗺️ Trajets récents</div>
+      <div class="card-body">
+        <div id="trajets-content"><p class="loading-text">Chargement…</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE CHAT -->
+  <div class="page" id="page-chat">
+    <div class="chat-box">
+      <div class="chat-header">
+        <span class="dot"></span>
+        💬 TranspoBot — Assistant IA
+      </div>
+      <div class="chat-messages" id="messages">
+        <div class="message-row bot">
+          <div class="avatar bot">🤖</div>
+          <div class="message bot">Bonjour ! Je suis TranspoBot. Posez-moi une question sur vos données de transport.</div>
+        </div>
+      </div>
+      <div class="suggestions">
+        <button class="suggestion" onclick="ask('Combien de trajets ont été effectués ?')">Combien de trajets ?</button>
+        <button class="suggestion" onclick="ask('Liste des véhicules actifs')">Véhicules actifs</button>
+        <button class="suggestion" onclick="ask('Quels sont les incidents non résolus ?')">Incidents ouverts</button>
+        <button class="suggestion" onclick="ask('Quel chauffeur a fait le plus de trajets ?')">Meilleur chauffeur</button>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="questionInput" placeholder="Ex: Combien de bus sont en maintenance ?" />
+        <button id="sendBtn" onclick="sendMessage()">Envoyer</button>
+      </div>
+    </div>
+    <div class="results-box">
+      <h3 id="resultsTitle">📊 Résultats</h3>
+      <div id="resultsContent"><p>Les résultats de vos requêtes s'afficheront ici.</p></div>
+    </div>
   </div>
 
 </div>
@@ -321,6 +359,42 @@
 <script>
   const API = "";
 
+  // Navigation
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(`page-${name}`).classList.add('active');
+    event.target.classList.add('active');
+
+    if (name === 'vehicules') loadVehicules();
+    if (name === 'chauffeurs') loadChauffeurs();
+    if (name === 'trajets') loadTrajets();
+  }
+
+  // Badge statut
+  function badge(val) {
+    const cls = val?.toLowerCase().replace(' ', '_') || '';
+    return `<span class="badge badge-${cls}">${val ?? ''}</span>`;
+  }
+
+  // Générer un tableau HTML
+  function makeTable(data, cols, renderers = {}) {
+    if (!data.length) return '<p>Aucune donnée.</p>';
+    let html = '<table><thead><tr>';
+    cols.forEach(([key, label]) => html += `<th>${label}</th>`);
+    html += '</tr></thead><tbody>';
+    data.forEach(row => {
+      html += '<tr>';
+      cols.forEach(([key]) => {
+        const val = row[key] ?? '';
+        html += `<td>${renderers[key] ? renderers[key](val) : val}</td>`;
+      });
+      html += '</tr>';
+    });
+    return html + '</tbody></table>';
+  }
+
+  // Stats
   async function loadStats() {
     try {
       const res = await fetch(`${API}/api/stats`);
@@ -331,23 +405,75 @@
       cards[2].textContent = data.vehicules_actifs;
       cards[3].textContent = data.incidents_ouverts;
       cards[4].textContent = Number(data.recette_totale).toLocaleString('fr-FR');
-    } catch (e) {
-      console.error("Erreur stats:", e);
-    }
+    } catch (e) { console.error("Erreur stats:", e); }
   }
 
+  // Véhicules
+  async function loadVehicules() {
+    const el = document.getElementById('vehicules-content');
+    try {
+      const res = await fetch(`${API}/api/vehicules`);
+      const data = await res.json();
+      el.innerHTML = makeTable(data, [
+        ['immatriculation', 'Immatriculation'],
+        ['type', 'Type'],
+        ['capacite', 'Capacité'],
+        ['statut', 'Statut'],
+        ['kilometrage', 'Kilométrage'],
+        ['date_acquisition', 'Acquisition'],
+      ], { statut: badge });
+    } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
+  }
+
+  // Chauffeurs
+  async function loadChauffeurs() {
+    const el = document.getElementById('chauffeurs-content');
+    try {
+      const res = await fetch(`${API}/api/chauffeurs`);
+      const data = await res.json();
+      el.innerHTML = makeTable(data, [
+        ['nom', 'Nom'],
+        ['prenom', 'Prénom'],
+        ['telephone', 'Téléphone'],
+        ['categorie_permis', 'Permis'],
+        ['disponibilite', 'Disponibilité'],
+        ['immatriculation', 'Véhicule'],
+        ['date_embauche', 'Embauche'],
+      ], {
+        disponibilite: v => badge(v == 1 || v === true ? 'disponible' : 'indisponible')
+      });
+    } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
+  }
+
+  // Trajets
+  async function loadTrajets() {
+    const el = document.getElementById('trajets-content');
+    try {
+      const res = await fetch(`${API}/api/trajets/recent`);
+      const data = await res.json();
+      el.innerHTML = makeTable(data, [
+        ['ligne', 'Ligne'],
+        ['chauffeur_nom', 'Chauffeur'],
+        ['immatriculation', 'Véhicule'],
+        ['date_heure_depart', 'Départ'],
+        ['date_heure_arrivee', 'Arrivée'],
+        ['statut', 'Statut'],
+        ['nb_passagers', 'Passagers'],
+        ['recette', 'Recette (FCFA)'],
+      ], { statut: badge });
+    } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
+  }
+
+  // Chat
   function addMessage(text, type, sql = null) {
     const messages = document.getElementById('messages');
     const row = document.createElement('div');
     row.className = `message-row ${type}`;
-
     const avatar = document.createElement('div');
     avatar.className = `avatar ${type}`;
     avatar.textContent = type === 'bot' ? '🤖' : '👤';
-
     const bubble = document.createElement('div');
     bubble.className = `message ${type}`;
-
     if (text === '__loading__') {
       bubble.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
     } else {
@@ -359,7 +485,6 @@
         bubble.appendChild(sqlDiv);
       }
     }
-
     row.appendChild(avatar);
     row.appendChild(bubble);
     messages.appendChild(row);
@@ -385,6 +510,8 @@
   }
 
   async function ask(question) {
+    showPage('chat');
+    document.querySelectorAll('nav button')[4].classList.add('active');
     document.getElementById('questionInput').value = question;
     await sendMessage();
   }
@@ -394,13 +521,10 @@
     const btn = document.getElementById('sendBtn');
     const question = input.value.trim();
     if (!question) return;
-
     addMessage(question, 'user');
     input.value = '';
     btn.disabled = true;
-
     const loading = addMessage('__loading__', 'bot');
-
     try {
       const res = await fetch(`${API}/api/chat`, {
         method: 'POST',
