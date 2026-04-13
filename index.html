@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TranspoBot — GLSi</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -262,6 +263,21 @@
     .results-box p { color: #999; font-size: 0.9rem; }
 
     .loading-text { color: #999; font-style: italic; padding: 20px; text-align: center; }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 700px) { .charts-grid { grid-template-columns: 1fr; } }
+    .chart-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      border: 1px solid rgba(26,115,232,0.2);
+      padding: 20px;
+    }
+    .chart-card h3 { color: #1a73e8; font-size: 0.95rem; margin-bottom: 16px; }
   </style>
 </head>
 <body>
@@ -291,6 +307,16 @@
       <div class="stat-card"><div class="value">…</div><div class="label">Véhicules actifs</div></div>
       <div class="stat-card"><div class="value">…</div><div class="label">Incidents ouverts</div></div>
       <div class="stat-card"><div class="value">…</div><div class="label">Recette totale (FCFA)</div></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>🚌 Véhicules par statut</h3>
+        <canvas id="chartVehicules"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>💰 Recettes par ligne (FCFA)</h3>
+        <canvas id="chartRecettes"></canvas>
+      </div>
     </div>
   </div>
 
@@ -549,6 +575,44 @@
   });
 
   loadStats();
+  loadCharts();
+
+  async function loadCharts() {
+    try {
+      const [vRes, tRes] = await Promise.all([
+        fetch(`${API}/api/vehicules`),
+        fetch(`${API}/api/trajets/recent`)
+      ]);
+      const vehicules = await vRes.json();
+      const trajets = await tRes.json();
+
+      // Graphique vehicules par statut
+      const statutCount = {};
+      vehicules.forEach(v => { statutCount[v.statut] = (statutCount[v.statut] || 0) + 1; });
+      new Chart(document.getElementById('chartVehicules'), {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(statutCount),
+          datasets: [{ data: Object.values(statutCount), backgroundColor: ['#1a73e8','#f9a825','#e53935'], borderWidth: 2 }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+      });
+
+      // Graphique recettes par ligne
+      const ligneRecettes = {};
+      trajets.forEach(t => {
+        if (t.statut === 'termine') ligneRecettes[t.ligne] = (ligneRecettes[t.ligne] || 0) + Number(t.recette);
+      });
+      new Chart(document.getElementById('chartRecettes'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(ligneRecettes),
+          datasets: [{ label: 'Recette (FCFA)', data: Object.values(ligneRecettes), backgroundColor: '#1a73e8', borderRadius: 6 }]
+        },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+      });
+    } catch(e) { console.error('Erreur charts:', e); }
+  }
 </script>
 
 </body>
