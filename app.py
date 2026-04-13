@@ -29,6 +29,7 @@ DB_CONFIG = {
     "password": os.getenv("DB_PASSWORD", ""),
     "database": os.getenv("DB_NAME", "transpobot"),
     "ssl_disabled": False,
+    "charset": "utf8mb4",
 }
 
 LLM_API_KEY  = os.getenv("OPENAI_API_KEY", "")
