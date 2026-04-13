@@ -468,16 +468,26 @@
   }
 
   // Stats
+  function animateCount(el, target, duration = 1200, isAmount = false) {
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { start = target; clearInterval(timer); }
+      el.textContent = isAmount ? Math.floor(start).toLocaleString('fr-FR') : Math.floor(start);
+    }, 16);
+  }
+
   async function loadStats() {
     try {
       const res = await fetch(`${API}/api/stats`);
       const data = await res.json();
       const cards = document.querySelectorAll('#stats .stat-card .value');
-      cards[0].textContent = data.total_trajets;
-      cards[1].textContent = data.trajets_en_cours;
-      cards[2].textContent = data.vehicules_actifs;
-      cards[3].textContent = data.incidents_ouverts;
-      cards[4].textContent = Number(data.recette_totale).toLocaleString('fr-FR');
+      animateCount(cards[0], data.total_trajets);
+      animateCount(cards[1], data.trajets_en_cours);
+      animateCount(cards[2], data.vehicules_actifs);
+      animateCount(cards[3], data.incidents_ouverts);
+      animateCount(cards[4], data.recette_totale, 1500, true);
     } catch (e) { console.error("Erreur stats:", e); }
   }
 
