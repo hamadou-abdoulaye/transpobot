@@ -354,6 +354,7 @@
   <button onclick="showPage('vehicules')">🚌 Véhicules</button>
   <button onclick="showPage('chauffeurs')">👨‍✈️ Chauffeurs</button>
   <button onclick="showPage('trajets')">🗺️ Trajets</button>
+  <button onclick="showPage('incidents')">⚠️ Incidents</button>
   <button onclick="showPage('chat')">💬 Assistant IA</button>
 </nav>
 
@@ -413,6 +414,17 @@
     </div>
   </div>
 
+  <!-- PAGE INCIDENTS -->
+  <div class="page" id="page-incidents">
+    <div class="card">
+      <div class="card-header">⚠️ Incidents</div>
+      <div class="card-body">
+        <input class="search-bar" id="search-incidents" placeholder="🔍 Rechercher par type, ligne, chauffeur..." oninput="filterTable('incidents-table', this.value)" />
+        <div id="incidents-content"><p class="loading-text">Chargement…</p></div>
+      </div>
+    </div>
+  </div>
+
   <!-- PAGE CHAT -->
   <div class="page" id="page-chat">
     <div class="chat-box">
@@ -457,7 +469,7 @@
 
     if (name === 'vehicules') loadVehicules();
     if (name === 'chauffeurs') loadChauffeurs();
-    if (name === 'trajets') loadTrajets();
+    if (name === 'incidents') loadIncidents();
   }
 
   function filterTable(tableId, query) {
@@ -568,6 +580,27 @@
         ['nb_passagers', 'Passagers'],
         ['recette', 'Recette (FCFA)'],
       ], { statut: badge }, 'trajets-table');
+    } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
+  }
+
+  // Incidents
+  async function loadIncidents() {
+    const el = document.getElementById('incidents-content');
+    try {
+      const res = await fetch(`${API}/api/incidents`);
+      const data = await res.json();
+      el.innerHTML = makeTable(data, [
+        ['type', 'Type'],
+        ['description', 'Description'],
+        ['gravite', 'Gravite'],
+        ['ligne', 'Ligne'],
+        ['chauffeur', 'Chauffeur'],
+        ['date_incident', 'Date'],
+        ['resolu', 'Resolu'],
+      ], {
+        gravite: v => badge(v),
+        resolu: v => badge(v == 1 || v === true ? 'actif' : 'hors_service')
+      }, 'incidents-table');
     } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
   }
 

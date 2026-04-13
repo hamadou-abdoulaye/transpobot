@@ -144,6 +144,17 @@ def get_trajets_recent():
         "ORDER BY t.date_heure_depart DESC LIMIT 20"
     )
 
+@app.get("/api/incidents")
+def get_incidents():
+    return execute_query(
+        "SELECT i.*, t.date_heure_depart, l.nom as ligne, ch.nom as chauffeur "
+        "FROM incidents i "
+        "JOIN trajets t ON i.trajet_id = t.id "
+        "JOIN lignes l ON t.ligne_id = l.id "
+        "JOIN chauffeurs ch ON t.chauffeur_id = ch.id "
+        "ORDER BY i.date_incident DESC"
+    )
+
 @app.get("/")
 def root():
     return FileResponse("index.html")
