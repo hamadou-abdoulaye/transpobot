@@ -145,6 +145,19 @@
     }
     .card-body { padding: 20px; }
 
+    .search-bar {
+      width: 100%;
+      padding: 10px 16px;
+      border: 1.5px solid #dde3f0;
+      border-radius: 24px;
+      font-size: 0.92rem;
+      outline: none;
+      margin-bottom: 16px;
+      background: #f7f9fc;
+      transition: border 0.2s;
+    }
+    .search-bar:focus { border-color: #1a73e8; background: white; }
+
     /* Badge statut */
     .badge {
       display: inline-block;
@@ -372,6 +385,7 @@
     <div class="card">
       <div class="card-header">🚌 Liste des véhicules</div>
       <div class="card-body">
+        <input class="search-bar" id="search-vehicules" placeholder="🔍 Rechercher par immatriculation, type, statut..." oninput="filterTable('vehicules-table', this.value)" />
         <div id="vehicules-content"><p class="loading-text">Chargement…</p></div>
       </div>
     </div>
@@ -382,6 +396,7 @@
     <div class="card">
       <div class="card-header">👨‍✈️ Liste des chauffeurs</div>
       <div class="card-body">
+        <input class="search-bar" id="search-chauffeurs" placeholder="🔍 Rechercher par nom, prénom, téléphone..." oninput="filterTable('chauffeurs-table', this.value)" />
         <div id="chauffeurs-content"><p class="loading-text">Chargement…</p></div>
       </div>
     </div>
@@ -392,6 +407,7 @@
     <div class="card">
       <div class="card-header">🗺️ Trajets récents</div>
       <div class="card-body">
+        <input class="search-bar" id="search-trajets" placeholder="🔍 Rechercher par ligne, chauffeur, statut..." oninput="filterTable('trajets-table', this.value)" />
         <div id="trajets-content"><p class="loading-text">Chargement…</p></div>
       </div>
     </div>
@@ -444,6 +460,14 @@
     if (name === 'trajets') loadTrajets();
   }
 
+  function filterTable(tableId, query) {
+    const q = query.toLowerCase();
+    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+    rows.forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
   // Badge statut
   function badge(val) {
     const cls = val?.toLowerCase().replace(' ', '_') || '';
@@ -451,9 +475,9 @@
   }
 
   // Générer un tableau HTML
-  function makeTable(data, cols, renderers = {}) {
+  function makeTable(data, cols, renderers = {}, tableId = '') {
     if (!data.length) return '<p>Aucune donnée.</p>';
-    let html = '<table><thead><tr>';
+    let html = `<table${tableId ? ` id="${tableId}"` : ''}><thead><tr>`;
     cols.forEach(([key, label]) => html += `<th>${label}</th>`);
     html += '</tr></thead><tbody>';
     data.forEach(row => {
@@ -504,7 +528,7 @@
         ['statut', 'Statut'],
         ['kilometrage', 'Kilométrage'],
         ['date_acquisition', 'Acquisition'],
-      ], { statut: badge });
+      ], { statut: badge }, 'vehicules-table');
     } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
   }
 
@@ -524,7 +548,7 @@
         ['date_embauche', 'Embauche'],
       ], {
         disponibilite: v => badge(v == 1 || v === true ? 'disponible' : 'indisponible')
-      });
+      }, 'chauffeurs-table');
     } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
   }
 
@@ -543,7 +567,7 @@
         ['statut', 'Statut'],
         ['nb_passagers', 'Passagers'],
         ['recette', 'Recette (FCFA)'],
-      ], { statut: badge });
+      ], { statut: badge }, 'trajets-table');
     } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
   }
 
