@@ -58,7 +58,9 @@ SYSTEM_PROMPT = (
 )
 
 def get_db():
-    return mysql.connector.connect(**DB_CONFIG)
+    conn = mysql.connector.connect(**DB_CONFIG)
+    conn.cmd_query("SET NAMES utf8mb4")
+    return conn
 
 def execute_query(sql):
     conn = get_db()
