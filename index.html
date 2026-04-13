@@ -316,6 +316,31 @@
 
     .loading-text { color: #999; font-style: italic; padding: 20px; text-align: center; }
 
+    /* Responsive mobile */
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.1rem; }
+      header span { display: none; }
+
+      nav { padding: 8px 10px; gap: 2px; overflow-x: auto; flex-wrap: nowrap; }
+      nav button { padding: 6px 10px; font-size: 0.78rem; white-space: nowrap; }
+
+      .container { margin: 12px auto; padding: 0 10px; gap: 16px; }
+
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat-card { padding: 14px 10px; }
+      .stat-card .value { font-size: 1.5rem; }
+
+      .charts-grid { grid-template-columns: 1fr; }
+
+      .chat-box { height: 420px; }
+      .message { max-width: 90%; }
+
+      table { font-size: 0.78rem; }
+      th, td { padding: 7px 8px; }
+
+      .search-bar { font-size: 0.85rem; }
+    }
+
     .charts-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
