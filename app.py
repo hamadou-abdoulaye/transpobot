@@ -33,8 +33,8 @@ DB_CONFIG = {
 }
 
 LLM_API_KEY  = os.getenv("OPENAI_API_KEY", "")
-LLM_MODEL    = os.getenv("LLM_MODEL", "gpt-4o-mini")
-LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1")
+LLM_MODEL    = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.groq.com/openai/v1")
 
 DB_SCHEMA = (
     "Tables MySQL disponibles:\n"
@@ -146,6 +146,10 @@ def get_trajets_recent():
         "JOIN vehicules v ON t.vehicule_id = v.id "
         "ORDER BY t.date_heure_depart DESC LIMIT 20"
     )
+
+@app.get("/api/lignes")
+def get_lignes():
+    return execute_query("SELECT * FROM lignes ORDER BY code")
 
 @app.get("/api/incidents")
 def get_incidents():

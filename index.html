@@ -380,6 +380,7 @@
   <button onclick="showPage('chauffeurs')">👨‍✈️ Chauffeurs</button>
   <button onclick="showPage('trajets')">🗺️ Trajets</button>
   <button onclick="showPage('incidents')">⚠️ Incidents</button>
+  <button onclick="showPage('lignes')">🗺️ Lignes</button>
   <button onclick="showPage('chat')">💬 Assistant IA</button>
 </nav>
 
@@ -450,6 +451,17 @@
     </div>
   </div>
 
+  <!-- PAGE LIGNES -->
+  <div class="page" id="page-lignes">
+    <div class="card">
+      <div class="card-header">🗺️ Lignes</div>
+      <div class="card-body">
+        <input class="search-bar" placeholder="🔍 Rechercher par code, origine, destination..." oninput="filterTable('lignes-table', this.value)" />
+        <div id="lignes-content"><p class="loading-text">Chargement…</p></div>
+      </div>
+    </div>
+  </div>
+
   <!-- PAGE CHAT -->
   <div class="page" id="page-chat">
     <div class="chat-box">
@@ -494,7 +506,9 @@
 
     if (name === 'vehicules') loadVehicules();
     if (name === 'chauffeurs') loadChauffeurs();
+    if (name === 'trajets') loadTrajets();
     if (name === 'incidents') loadIncidents();
+    if (name === 'lignes') loadLignes();
   }
 
   function filterTable(tableId, query) {
@@ -626,6 +640,23 @@
         gravite: v => badge(v),
         resolu: v => badge(v == 1 || v === true ? 'actif' : 'hors_service')
       }, 'incidents-table');
+    } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
+  }
+
+  // Lignes
+  async function loadLignes() {
+    const el = document.getElementById('lignes-content');
+    try {
+      const res = await fetch(`${API}/api/lignes`);
+      const data = await res.json();
+      el.innerHTML = makeTable(data, [
+        ['code', 'Code'],
+        ['nom', 'Nom'],
+        ['origine', 'Origine'],
+        ['destination', 'Destination'],
+        ['distance_km', 'Distance (km)'],
+        ['duree_minutes', 'Durée (min)'],
+      ], {}, 'lignes-table');
     } catch (e) { el.innerHTML = '<p>Erreur de chargement.</p>'; }
   }
 
